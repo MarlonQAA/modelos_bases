@@ -37,7 +37,7 @@ def split_train_val(dataset_origen: str):
         clase for clase in os.listdir(dataset_origen)
         if os.path.isdir(os.path.join(dataset_origen, clase))
     ])
-  
+
   for class_id, clase in enumerate(clases):
         class_names.append(clase)
         file_names = glob(os.path.join(dataset_origen, clase, "*.*"))
@@ -75,8 +75,8 @@ def split_train_val(dataset_origen: str):
 
 from torch.utils.data import Dataset, DataLoader, RandomSampler
 from torchvision import transforms
-from PIL import Image 
-import torch 
+from PIL import Image
+import torch
 
 
 class InstrumentsDataset(Dataset):
@@ -105,7 +105,7 @@ class InstrumentsDataset(Dataset):
         class_id = torch.tensor(self.class_idx[idx], dtype=torch.int64)
 
         return img, class_id
-    
+
 def load_data(dataset_csv: str,
               transform=transforms.ToTensor(),
               num_workers: int = 0,
@@ -120,7 +120,7 @@ def load_data(dataset_csv: str,
         shuffle=shuffle,
         drop_last=False
     )
-    
+
 
 
 
