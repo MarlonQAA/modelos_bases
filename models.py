@@ -10,7 +10,7 @@ class CNNClassifier(nn.Module):
                n_clases = 10,
                kernel_size = 3
                ):
-
+    
     super(CNNClassifier,self).__init__()
 
     L = []
