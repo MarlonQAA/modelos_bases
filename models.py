@@ -10,7 +10,7 @@ class CNNClassifier(nn.Module):
                n_clases = 10,
                kernel_size = 3
                ):
-    
+
     super().__init__()
 
     L = []
@@ -46,7 +46,7 @@ class CNNClassifier(nn.Module):
       L2.append(nn.Linear(in_features=c,out_features=n_l) )
       L2.append(nn.ReLU())
       L2.append(nn.Dropout(0.1))
-      c=n_clases
+      c=n_l
 
     L2.append(nn.Linear(in_features=c,out_features=n_clases))
     self.classifier = nn.Sequential(*L2)
