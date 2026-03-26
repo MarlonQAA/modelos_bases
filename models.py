@@ -11,7 +11,7 @@ class CNNClassifier(nn.Module):
                kernel_size = 3
                ):
 
-    super(CNNClassifier,Self).__init__()
+    super(CNNClassifier,self).__init__()
 
     L = []
     c= n_input_channels
