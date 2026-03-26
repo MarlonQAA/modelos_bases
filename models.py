@@ -82,4 +82,5 @@ def load_model(name: str, device=None):
     r = CNNClassifier() #Esto construye un modelo nuevo, vacío, con pesos inicializados aleatoriamente.
     r.load_state_dict(load(name, map_location=device, weights_only=True)) # cargas los pesos con load_state_dict() a r.
     r.to(device)
+    print(f'Modelo cargado en {device}')
     return r
