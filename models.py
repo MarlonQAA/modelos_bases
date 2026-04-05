@@ -80,7 +80,7 @@ class ResNet(nn.Module):
                           kernel_size=kernel_size,
                           padding=kernel_size//2,
                           bias=False)
-      
+
       self.b1 = nn.BatchNorm2d(n_output) # gamma y betha
       self.b2 = nn.BatchNorm2d(n_output) # gamma y betha
       self.b3 = nn.BatchNorm2d(n_output) # gamma y betha
@@ -104,10 +104,10 @@ class ResNet(nn.Module):
                                           )
                                       )
                                   )
-                               ) 
+                               )
                             )+ self.skip(x)
-                      ) 
-        
+                      )
+
   def __init__(self, layers = [32,64,128,256],linear_layers = [1280], n_input_chanels = 3, n_classes = 10, kernel_size = 3):
     super().__init__()
 
@@ -134,6 +134,37 @@ class ResNet(nn.Module):
     x = x.mean(dim = [2,3]) # [N,256]
     x = self.classifier(x) # [N,10]
     return(x)
+
+# ResNet (TransferLearning + Fine-tuning)
+from torchvision.models import resnet50, ResNet50_Weights
+class ResNet50Transfer(nn.Module):
+    def __init__(self, linear_layers=[128], n_clases=10, freeze_base=True):
+        super(ResNet50Transfer, self).__init__()
+
+        self.weights = ResNet50_Weights.IMAGENET1K_V2
+        self.base_model = resnet50(weights=self.weights)
+
+        # Fine Tuning
+        if freeze_base is True:
+            for param in self.base_model.parameters():
+                # Estos parametros no se van a mover
+                param.requires_grad = False
+
+        # Reemplazar la ultima capa para hacer fine-tuning (fc es la capa de clasificacion)
+        c = self.base_model.fc.in_features
+
+        L2 = []
+        for n_l in linear_layers:
+            L2.append(nn.Linear(c, n_l))
+            L2.append(nn.ReLU())
+            L2.append(nn.Dropout(p=0.3))
+            c = n_l 
+
+        L2.append(nn.Linear(c, n_clases))
+        self.base_model.fc = nn.Sequential(*L2)
+    
+    def forward(self, x):
+        return self.base_model(x)
 
 
 ##### Guarda Pesos del modelo que se empieza a entrenar #####
@@ -173,7 +204,7 @@ def load_model_resnet(name: str, device=None):
     else:
         device = torch.device(device)
 
-    r = ResNet() #Esto construye un modelo nuevo, vacío, con pesos inicializados aleatoriamente.
+    r = ResNet50Transfer() #Esto construye un modelo nuevo, vacío, con pesos inicializados aleatoriamente.
     r.load_state_dict(load(name, map_location=device, weights_only=True)) # cargas los pesos con load_state_dict() a r.
     r.to(device)
     print(f'Modelo cargado en {device}')
