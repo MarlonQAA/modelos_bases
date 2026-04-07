@@ -1,12 +1,12 @@
 
-from torch.utils.data import Dataset, DataLoader 
+from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import v2
-from PIL import Image 
-import torch 
-from glob import glob 
+from PIL import Image
+import torch
+from glob import glob
 
 
-DATASET_PATH = "./flood_area_dataset"
+DATASET_PATH = "/content/drive/MyDrive/Tercer Modelo Unit/flood_area_dataset"
 DEFAULT_TRANSFORM = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 
 class FloodDataset(Dataset):
@@ -25,12 +25,12 @@ class FloodDataset(Dataset):
 
                 self.img_names.append(img_name)
                 self.mask_names.append(mask_name)
-            
-        self.transform = transform 
+
+        self.transform = transform
 
     def __len__(self):
         return len(self.img_names)
-    
+
     def __getitem__(self, idx):
         img_string = self.img_names[idx]
         mask_string = self.mask_names[idx]
@@ -44,7 +44,7 @@ class FloodDataset(Dataset):
         mask = self.transform(mask)
         mask = v2.Grayscale(1)(mask)
 
-        return img, mask 
+        return img, mask
 
 def load_data(dataset_path=DATASET_PATH, transform=DEFAULT_TRANSFORM, num_workers=0,
               batch_size=128):
